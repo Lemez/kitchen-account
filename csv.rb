@@ -97,6 +97,7 @@ def write_annual_data(data,fields)
 		@in = @records.reject{|k,v| @debiting.include?(k)}
 		@out = @records.select{|k,v| @debiting.include?(k)}
 
+		grand_totals = []
 		[@in,@out].each do |records|
 			@totals = {}
 			M_PAYMENTS.each {|m|@totals[m]=[0]}
@@ -118,7 +119,6 @@ def write_annual_data(data,fields)
 							@totals[m] << amount
 						else
 							@to_write << [" "," "]
-							
 							p "nope!: #{m};#{payee}"
 						end 
 
@@ -129,10 +129,26 @@ def write_annual_data(data,fields)
 				end
 				
 				totals_array = @totals.map{|k,v| [v.reduce(&:+)," "]}
-				p totals_array
+				grand_totals << totals_array.map(&:first)
+
 				csvfile << ["TOTALS",totals_array].flatten
 				csvfile << [""]
 			end
+
+			first,second = grand_totals[0],grand_totals[1]
+			the_real_thing = []
+			the_cash_thing = []
+
+			cash_amount = 5632
+			
+			first.each_with_index do |j,index|
+				the_real_thing << [j + second[index]," "]
+				cash_amount += (j+second[index])
+				the_cash_thing << [cash_amount," "]
+			end
+
+			csvfile << ["OVERALL", the_real_thing].flatten
+			csvfile << ["Cumulative", the_cash_thing].flatten
 		end
 	end
 
