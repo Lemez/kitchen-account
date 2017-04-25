@@ -20,7 +20,6 @@ include Capybara::DSL
 Capybara.default_driver = :poltergeist
 MONTHS = %w(January February March April May June July August September October November December)
 
-
 ###login page
 
 def get_data(options={:offline=>false})

@@ -4,4 +4,5 @@ require_relative('./script.rb')
 
 @fields = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
 
-write_summary_data(@global_data,@fields)
+# write_summary_data(@global_data,@fields)
+write_annual_data(@global_data,@fields)

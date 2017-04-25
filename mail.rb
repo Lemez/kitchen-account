@@ -1,5 +1,4 @@
-require 'pony'
-	
+
 require 'net/smtp'
 
 require 'mail'
