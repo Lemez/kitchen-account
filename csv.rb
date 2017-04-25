@@ -8,6 +8,12 @@
 	"0373K - PT PURCHASING SERVICE" => "Pour Tous"
 }
 
+@debiting = [
+"LE GOURMET DN [BAKERY",
+"GAS BOTTLE BILLING",
+'PT PURCHASING SERVICE'
+]
+
 M_ABBR = %w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 M_PAYMENTS = %w(11 12 01 02 03 04)
 M_PAYMENT_MONTHS = %w(Nov Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct)
@@ -83,29 +89,49 @@ def write_annual_data(data,fields)
 			@records[payee] = {} if @records[payee].nil?
 			@records[payee][@month] = [] if @records[payee][@month].nil?
 			relevant_entry = (data[i]["CREDIT"].empty? ? data[i]["DEBIT"] : data[i]["CREDIT"])
+			desc = desc.split("-").last if @debiting.include?(payee)
 			@records[payee][@month] << [relevant_entry,desc]
 
 		end
 
-		# @other = @records.select{|k,v| v.map{|item| item[0][0].to_f>0}}
-		# p @other
+		@in = @records.reject{|k,v| @debiting.include?(k)}
+		@out = @records.select{|k,v| @debiting.include?(k)}
 
-		@records.each_pair do |payee,payments| 
-			@to_write = [payee]
+		[@in,@out].each do |records|
+			@totals = {}
+			M_PAYMENTS.each {|m|@totals[m]=[0]}
 
-				M_PAYMENTS.each do |m|
-					if payments.has_key?(m)
-						amount = payments[m].map(&:first).map(&:to_f).reduce(&:+).round(0)
-						comment = payments[m].map(&:last).join("\n")
-						p "snap!: #{m};#{payee};#{amount}; #{comment}"
-						@to_write << [amount,comment]
-					else
-						@to_write << [" "," "]
-						p "nope!: #{m};#{payee};"
-					end 
+			records.each_pair do |payee,payments| 
+				@to_write = [payee]
+				
+					M_PAYMENTS.each do |m|
+						
+						if payments.has_key?(m)
+
+							amount = payments[m].map(&:first).map(&:to_f).reduce(&:+).round(0)
+							comment = payments[m].map(&:last).join("\n")
+							
+							@to_write << [amount,comment]
+
+							p "snap!: #{m};#{payee};#{amount}; #{comment}"
+
+							@totals[m] << amount
+						else
+							@to_write << [" "," "]
+							
+							p "nope!: #{m};#{payee}"
+						end 
+
+
+					end
+
+					csvfile << @to_write.flatten
 				end
-
-				csvfile << @to_write.flatten
+				
+				totals_array = @totals.map{|k,v| [v.reduce(&:+)," "]}
+				p totals_array
+				csvfile << ["TOTALS",totals_array].flatten
+				csvfile << [""]
 			end
 		end
 	end
