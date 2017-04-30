@@ -1,16 +1,16 @@
 require 'net/smtp'
 require 'mail'
 
-unless @@heroku 
-	@@user = USER
-	@@pass = PASS
+unless $heroku 
+	$user = USER
+	$pass = PASS
 end
 
 options = { :address              => "smtp.gmail.com",
             :port                 => 587,
             # :domain               => 'your.host.name',
-            :user_name            => @@user,
-            :password             => @@pass,
+            :user_name            => $user,
+            :password             => $pass,
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
 
@@ -19,15 +19,14 @@ Mail.defaults do
 end
 
 def mail(data,balance)
-	options[:balance] = balance
 
-	formatted_data = format_data_to_html(data,options)
+	formatted_data = format_data_to_html(data,balance)
 	p formatted_data
-	
+
 	deliver_mail(formatted_data, options)
 end
 
-def format_data_to_html(data,options)
+def format_data_to_html(data,balance)
 
 	# {"S.NO"=>"14348", "TYPE"=>"MT", "DATE"=>"01-02-2017", "ACCOUNT"=>"0373K - PT PURCHASING SERVICE", "DESCRIPTION"=>"MT 01/02/17 - BN:4 - 2017-02-1", "DEBIT"=>"-493.71", "CREDIT"=>""}
 	not_necessary = ["S.NO", "TYPE"]
@@ -45,7 +44,7 @@ def format_data_to_html(data,options)
 	end
 	if options[:balance]
 		html += '<tr>'
-		html += "<td>" + ["BALANCE",options[:balance].values.flatten.map(&:to_i).reduce(&:+)].join("</td><td>") + "</td>"
+		html += "<td>" + ["BALANCE",balance.values.flatten.map(&:to_i).reduce(&:+)].join("</td><td>") + "</td>"
 		html += '</tr>'
 	end
 

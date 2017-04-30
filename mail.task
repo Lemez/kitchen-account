@@ -1,8 +1,8 @@
-@@heroku = true
-@@user = ENV['USER']
-@@pass = ENV['PASS']
-@@pf_user = ENV['PF_USER']
-@@pf_pass = ENV['PF_PASS']
+$heroku = true
+$user = ENV['USER']
+$pass = ENV['PASS']
+$pf_user = ENV['PF_USER']
+$pf_pass = ENV['PF_PASS']
 
 require_relative('./script.rb')
 

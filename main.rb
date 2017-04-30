@@ -1,4 +1,4 @@
-@@heroku = false
+$heroku = false
 require_relative('./script.rb')
 
 # @global_data = get_data({:offline=>false})

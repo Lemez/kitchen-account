@@ -13,10 +13,10 @@ require_relative('./mail')
 include Capybara::DSL
 Capybara.default_driver = :poltergeist
 
-unless @@heroku
+unless $heroku
 	require_relative('./secret') 
-	@@pf_user = PF_USER
-	@@pf_pass = PF_PASS
+	$pf_user = PF_USER
+	$pf_pass = PF_PASS
 end
 
 MONTHS = %w(January February March April May June July August September October November December)
@@ -94,8 +94,8 @@ def login_get_data(options={:latest=>false})
 	user = find('input[name="username"]')
 	pwd = find('input[name="pwd"]')
 
-	user.send_keys(@@pf_user)
-	pwd.send_keys(@@pf_pass)
+	user.send_keys($pf_user)
+	pwd.send_keys($pf_pass)
 
 	find('input[value="Sign In"]').click
 
