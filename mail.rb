@@ -18,9 +18,12 @@ Mail.defaults do
   delivery_method :smtp, options
 end
 
-def mail(data,options={:balance=>nil})
+def mail(data,balance)
+	options[:balance] = balance
+
 	formatted_data = format_data_to_html(data,options)
 	p formatted_data
+	
 	deliver_mail(formatted_data, options)
 end
 
