@@ -76,17 +76,17 @@ def get_all_table_data(page)
 		end
 end
 
-def get_data(options={:offline=>false, :latest=>false})
+def get_data(options={:offline=>nil, :latest=>nil})
 	if options[:offline]
 		get_data_offline_from_csvs
 	elsif options[:latest]
-		login_get_data(options={:latest=>true})
+		login_get_data(options)
 	else
-		login_get_data(options={:latest=>false})
+		login_get_data
 	end
 end
 
-def login_get_data(options={:latest=>false})
+def login_get_data(options={:latest=>nil})
 	p "getting data online"
 
 	visit ("https://fs.auroville.org.in")
@@ -101,9 +101,8 @@ def login_get_data(options={:latest=>false})
 
 	#accounts page
 	
-
 	page.all(:xpath, '//option[contains(text(), "102296")]').first.select_option
-	sleep 3
+	sleep 5
 
 	this_month = MONTHS.index(Time.now.strftime("%B"))
 

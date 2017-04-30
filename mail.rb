@@ -12,6 +12,8 @@ if $heroku
             :enable_starttls_auto => true  }
 
 else
+	require_relative('./secret.rb')
+
 	$mail_options = { :address              => "smtp.gmail.com",
             :port                 => 587,
             :domain               => 'auroville.org.in',     
@@ -19,7 +21,6 @@ else
             :password             => PASS,
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
-
 
 end
 
