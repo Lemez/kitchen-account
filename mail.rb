@@ -1,18 +1,29 @@
 require 'net/smtp'
 require 'mail'
 
-unless $heroku 
-	$user = USER
-	$pass = PASS
-end
+if $heroku 
 
-$mail_options = { :address              => "smtp.gmail.com",
+	$mail_options = { :address              => 'smtp.sendgrid.net',
             :port                 => 587,
-            # :domain               => 'your.host.name',
+            :domain               => 'auroville.org.in',
             :user_name            => $user,
             :password             => $pass,
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
+
+else
+	$mail_options = { :address              => "smtp.gmail.com",
+            :port                 => 587,
+            :domain               => 'auroville.org.in',     
+            :user_name            => USER,
+            :password             => PASS,
+            :authentication       => 'plain',
+            :enable_starttls_auto => true  }
+
+
+end
+
+
 
 Mail.defaults do
   delivery_method :smtp, $mail_options
@@ -55,7 +66,7 @@ end
 def deliver_mail (data)
 	Mail.deliver do
        	to 'danielaboban@hotmail.com'
-     	from 'jonathan@auroville.org.in'
+     	from 'Kitchen Account Bot <jonathan@auroville.org.in>'
   		subject 'Kitchen account update: ' + Date.today.to_s
      	
      	text_part do

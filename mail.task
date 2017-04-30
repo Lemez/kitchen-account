@@ -1,6 +1,6 @@
 $heroku = true
-$user = ENV['USER']
-$pass = ENV['PASS']
+$user = ENV['SENDGRID_USERNAME']
+$pass = ENV['SENDGRID_PASSWORD']
 $pf_user = ENV['PF_USER']
 $pf_pass = ENV['PF_PASS']
 
