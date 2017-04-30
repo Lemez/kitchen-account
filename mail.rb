@@ -30,12 +30,12 @@ Mail.defaults do
   delivery_method :smtp, $mail_options
 end
 
-def mail(data,balance)
+def mail(data,balance,options={:test_mail=>nil})
 
 	formatted_data = format_data_to_html(data,balance)
 	p formatted_data
 
-	deliver_mail(formatted_data)
+	deliver_mail(formatted_data,options)
 end
 
 def format_data_to_html(data,balance=nil)
@@ -44,7 +44,7 @@ def format_data_to_html(data,balance=nil)
 	not_necessary = ["S.NO", "TYPE"]
 	headings = data[0].keys.reject{|a| not_necessary.include?(a) || a.empty?}
 
-	html = '<table><tbody><th><tr style="border-bottom: 1px solid #000;font-weight: 700;"><td>'+ headings.join("</td><td>") + '</td></tr></th>'
+	html = '<table style="border-collapse:collapse;"><tbody><th><tr style="border-bottom: 1px solid #000;font-weight: 700;"><td>'+ headings.join("</td><td>") + '</td></tr></th>'
 
 	# dates = data.reject{|line|(Date.today - 7) < Date.parse(line["DATE"]) }
 
@@ -55,18 +55,36 @@ def format_data_to_html(data,balance=nil)
 		html += '</tr>' 
 	end
 	if balance
-		html += '<tr>'
-		html += "<td>" + ["BALANCE",balance.values.flatten.map(&:to_i).reduce(&:+)].join("</td><td>") + "</td>"
+
+		balance_amount = balance.values.flatten.map(&:to_i).reduce(&:+)
+
+		if balance_amount >= 0
+			spaces = '</td><td>' * 4
+		else
+			spaces = '</td><td>' * 3
+		end
+			
+		html += '<tr style="border: 1px solid #000;font-weight: 700;">'
+			html += "<td>" 
+			html += "Current balance" 
+				html += spaces 
+			html += balance_amount.to_s 
+			html += "</td>"
 		html += '</tr>'
+
 	end
 
 	html += '</tbody></table>'
 	html
 end
 
-def deliver_mail (data)
+def deliver_mail (data,options)
+	
+	to_address = ( options[:test_mail] ? 'jonathan@auroville.org.in' : 'danielaboban@hotmail.com')
+	p "Delivering to #{to_address}"
+
 	Mail.deliver do
-       	to 'danielaboban@hotmail.com'
+       	to "#{to_address}"
      	from 'Kitchen Account Bot <jonathan@auroville.org.in>'
   		subject 'Kitchen account update: ' + Date.today.to_s
      	
