@@ -14,7 +14,7 @@ namespace :mail do
 
   		if day_of_the_week == 7 #it's a Sunday
   			puts "Sunday..."
-  			ruby ruby -r "./main.rb" -e "get_latest_and_mail_it"
+  			ruby -r "./main.rb" -e "get_latest_and_mail_it"
   		else 
   			puts "It's not yet Sunday"
   		end
