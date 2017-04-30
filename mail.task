@@ -1,0 +1,4 @@
+require_relative('./script.rb')
+
+@latest_data,@balance = get_data({:latest=>true})
+mail(@latest_data, options={:balance=>@balance})
