@@ -9,7 +9,7 @@ require "google_drive"
 
 require_relative('./csv')
 require_relative('./mail')
-require_relative('./secret') unless @@heroku.nil?
+require_relative('./secret') unless @@heroku
 
 include Capybara::DSL
 

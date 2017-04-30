@@ -1,11 +1,13 @@
 require 'net/smtp'
 require 'mail'
 
+@@heroku ? @user = ENV['USER'];@pass = ENV['USER'] : @user = USER ;@pass = PASS
+
 options = { :address              => "smtp.gmail.com",
             :port                 => 587,
             # :domain               => 'your.host.name',
-            :user_name            => USER,
-            :password             => PASS,
+            :user_name            => @user,
+            :password             => @pass,
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
 
