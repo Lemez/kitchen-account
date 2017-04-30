@@ -1,11 +1,11 @@
 @accounts_in = {
-	"106112K - JONATHAN DANIELA WALTON" => "Daniela/Jonathan",
-	"251630C - WHITE ANT STUDIO/FABIAN" => "Elvira/Fabian",
-	"106246K - JOST ELKE DANIEL RODARY" => "Elke/Daniel",
-	"0533C - PITCHANDIKULAM SMALL PROJECTS/ELVIRAANI" => "PF Small Projects"
+	$jda => "Daniela/Jonathan",
+	$fabian => "Elvira/Fabian",
+	$elke_daniel  => "Elke/Daniel",
+	$pf_small_projects => "PF Small Projects"
 }
 @accounts_out = {
-	"0373K - PT PURCHASING SERVICE" => "Pour Tous"
+	$pour_tous => "Pour Tous"
 }
 
 @debiting = [

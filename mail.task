@@ -5,6 +5,11 @@ $pf_user = ENV['PF_USER']
 $pf_pass = ENV['PF_PASS']
 $my_mail = ENV['MY_MAIL']
 $d_mail = ENV['D_MAIL']
+$pour_tous = ENV['ACC_POURTOUS']
+$pf_small_projects = ENV['ACC_PF_SP']
+$elke_daniel = ENV['ACC_ELKE']
+$fabian = ENV['ACC_FABIAN']
+$jda = ENV['ACC_JDA']
 
 require_relative('./script.rb')
 
