@@ -6,7 +6,7 @@ task default: %w[send_mail]
 
 #NB don't need :environment in this setup without Sinatra/RoR
 task :send_mail do 
-		puts ENV
+		RACK_ENV = production
 		puts "Daily mail check"
 		day_of_the_week = Date.today.cwday
 

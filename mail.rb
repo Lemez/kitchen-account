@@ -2,7 +2,7 @@
 require 'net/smtp'
 
 require 'mail'
-require_relative('./secret')
+require_relative('./secret') unless RACK_ENV
 
 options = { :address              => "smtp.gmail.com",
             :port                 => 587,
