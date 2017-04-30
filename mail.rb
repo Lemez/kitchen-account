@@ -1,8 +1,5 @@
-
 require 'net/smtp'
-
 require 'mail'
-require_relative('./secret') unless CUSTOM_ENV
 
 options = { :address              => "smtp.gmail.com",
             :port                 => 587,

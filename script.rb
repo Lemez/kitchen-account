@@ -7,21 +7,18 @@ require 'capybara/dsl'
 require 'csv'
 require "google_drive"
 
-# require 'rspec'
-# require 'rspec/expectations'
-
 require_relative('./csv')
 require_relative('./mail')
-require_relative('./secret')
+require_relative('./secret') unless @@heroku.nil?
 
 include Capybara::DSL
-# include RSpec::Matchers
 
 Capybara.default_driver = :poltergeist
 MONTHS = %w(January February March April May June July August September October November December)
 YEARS = %w(2016 2017)
 MONTHYEARS = %w(May-2016 June-2016 July-2016 August-2016 September-2016 October-2016 November-2016 December-2016 January-2017 February-2017 March-2017 April-2017)
 FIELDS = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
+
 ###login page
 
 def get_all_table_data(page)
