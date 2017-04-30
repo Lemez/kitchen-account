@@ -2,3 +2,5 @@
 ./secret.rb
 secret.rb
 /secret
+./csv/*
+csv/*
