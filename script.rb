@@ -29,11 +29,13 @@ FIELDS = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
 def get_all_table_data(page)
 	@data = []
 	if @year != @lastyear
-		page.all(:xpath, '//option[contains(text(),"' + @lastyear + '")]').first.select_option
+		year = page.all(:xpath, '//option[contains(text(),"' + @lastyear + '")]').first
+		year.select_option
 		sleep 3	
 	end
 
-	page.all(:xpath, '//option[contains(text(),"' + @month + '")]').first.select_option
+	month = page.all(:xpath, '//option[contains(text(),"' + @month + '")]').first
+	month.select_option
 	sleep 3	
 
 	page.all('tbody').each_with_index do |table,i|
@@ -86,8 +88,11 @@ def get_data(options={:offline=>nil, :latest=>nil})
 	end
 end
 
+def get_first_row_of_page
+end
+
 def login_get_data(options={:latest=>nil})
-	p "getting data online"
+	p "getting data online - login"
 
 	visit ("https://fs.auroville.org.in")
 
@@ -100,16 +105,25 @@ def login_get_data(options={:latest=>nil})
 	find('input[value="Sign In"]').click
 
 	#accounts page
-	
-	page.all(:xpath, '//option[contains(text(), "102296")]').first.select_option
-	sleep 5
+	p "logged in"
+	account_path = page.all(:xpath, "//select[@name='accountnumber']/option[@value='102296']").first
+
+	if account_path.has_text?("KITCHEN")
+		account_path.select_option
+		p "acc selected"
+	else
+		p "acc not selected"
+	end
+
+	# page.all('a', :text => 'Reload').first.click
+	# page.all(:xpath, '//option[contains(text(), "KITCHEN")]').first.trigger('click')
 
 	this_month = MONTHS.index(Time.now.strftime("%B"))
 
 	@global_data = []
 	@lastyear = ''
 
-	if not options[:latest]
+	unless options[:latest]
 		MONTHYEARS.each do |month_year|
 			
 			@month,@year = month_year.split("-").map{|x|x.gsub("-","")}
@@ -122,7 +136,7 @@ def login_get_data(options={:latest=>nil})
 
 			@lastyear = @year
 		end
-		@global_data
+		[@global_data,'']
 	else
 		@month = Date.today.strftime("%B")
 		@last_month = (Date.today - 7).strftime("%B")
@@ -140,9 +154,6 @@ def login_get_data(options={:latest=>nil})
 		[@global_data,@data[-1]]
 		
 	end
-
-	
-	
 end
 
 
