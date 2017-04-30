@@ -9,11 +9,16 @@ require "google_drive"
 
 require_relative('./csv')
 require_relative('./mail')
-require_relative('./secret') unless @@heroku
 
 include Capybara::DSL
-
 Capybara.default_driver = :poltergeist
+
+unless @@heroku
+	require_relative('./secret') 
+	@@pf_user = PF_USER
+	@@pf_pass = PF_PASS
+end
+
 MONTHS = %w(January February March April May June July August September October November December)
 YEARS = %w(2016 2017)
 MONTHYEARS = %w(May-2016 June-2016 July-2016 August-2016 September-2016 October-2016 November-2016 December-2016 January-2017 February-2017 March-2017 April-2017)
@@ -89,8 +94,8 @@ def login_get_data(options={:latest=>false})
 	user = find('input[name="username"]')
 	pwd = find('input[name="pwd"]')
 
-	user.send_keys(PF_USER)
-	pwd.send_keys(PF_PASS)
+	user.send_keys(@@pf_user)
+	pwd.send_keys(@@pf_pass)
 
 	find('input[value="Sign In"]').click
 
