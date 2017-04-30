@@ -1,5 +1,7 @@
 ruby './main.rb'
 
+Email-ids ~ Heroku Config Vars
+
 TO DO:
 cronjob for *get_data({:offline=>false})*
 mailling for *get_data({:offline=>false})*

@@ -3,6 +3,8 @@ $user = ENV['SENDGRID_USERNAME']
 $pass = ENV['SENDGRID_PASSWORD']
 $pf_user = ENV['PF_USER']
 $pf_pass = ENV['PF_PASS']
+$my_mail = ENV['MY_MAIL']
+$d_mail = ENV['D_MAIL']
 
 require_relative('./script.rb')
 

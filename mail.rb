@@ -21,6 +21,7 @@ else
             :password             => PASS,
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
+            
 
 end
 
@@ -80,7 +81,7 @@ end
 
 def deliver_mail (data,options)
 	
-	to_address = ( options[:test_mail] ? 'jonathan@auroville.org.in' : 'danielaboban@hotmail.com')
+	to_address = ( options[:test_mail] ? $my_mail : $d_mail)
 	p "Delivering to #{to_address}"
 
 	Mail.deliver do
