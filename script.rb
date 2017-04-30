@@ -19,54 +19,22 @@ include Capybara::DSL
 
 Capybara.default_driver = :poltergeist
 MONTHS = %w(January February March April May June July August September October November December)
-
+YEARS = %w(2016 2017)
+MONTHYEARS = %w(May-2016 June-2016 July-2016 August-2016 September-2016 October-2016 November-2016 December-2016 January-2017 February-2017 March-2017 April-2017)
+FIELDS = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
 ###login page
 
-def get_data(options={:offline=>false})
-	if options[:offline]
-		get_data_offline_from_csvs
-	else
-		login_get_data
-	end
-end
-
-def login_get_data
-	p "getting data online"
-
-	visit ("https://fs.auroville.org.in")
-
-	user = find('input[name="username"]')
-	pwd = find('input[name="pwd"]')
-
-	user.send_keys(PF_USER)
-	pwd.send_keys(PF_PASS)
-
-	find('input[value="Sign In"]').click
-
-	#accounts page
-	@fields = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
-
-	page.all(:xpath, '//option[contains(text(), "102296")]').first.select_option
-	sleep 3
-
-	this_month = MONTHS.index(Time.now.strftime("%B"))
-
-	@global_data = []
-
-	(this_month+1).times do |month_i|
-		# 1.times do |month_i|
-
-		@data = []
-		month = month_i
-		# month = month_i + 3
-		@month = MONTHS[month]; p @month
-		@date = Date.parse("#{@month} 2017").strftime("%m-%y"); p @date
-
-
-		page.all(:xpath, '//option[contains(text(),"' + @month + '")]').first.select_option
+def get_all_table_data(page)
+	@data = []
+	if @year != @lastyear
+		page.all(:xpath, '//option[contains(text(),"' + @lastyear + '")]').first.select_option
 		sleep 3	
+	end
 
-		page.all('tbody').each_with_index do |table,i|
+	page.all(:xpath, '//option[contains(text(),"' + @month + '")]').first.select_option
+	sleep 3	
+
+	page.all('tbody').each_with_index do |table,i|
 			if i==4
 
 				size = table.all('tr').count
@@ -83,10 +51,10 @@ def login_get_data
 					
 					when 4..(size-3)
 					
-						row = {}; @fields.each{|f| row[f]=""}  
+						row = {}; FIELDS.each{|f| row[f]=""}  
 
 						tr.all('td').each_with_index{|td,td_index| 
-							row[@fields[td_index]]=td.text
+							row[FIELDS[td_index]]=td.text
 						} 
 
 						@data << row
@@ -104,13 +72,76 @@ def login_get_data
 				end
 			end
 		end
+end
 
-		# write_to_local_csv(@global_data,@fields,"all")
+def get_data(options={:offline=>false, :latest=>false})
+	if options[:offline]
+		get_data_offline_from_csvs
+	elsif options[:latest]
+		login_get_data(options={:latest=>true})
+	else
+		login_get_data(options={:latest=>false})
+	end
+end
+
+def login_get_data(options={:latest=>false})
+	p "getting data online"
+
+	visit ("https://fs.auroville.org.in")
+
+	user = find('input[name="username"]')
+	pwd = find('input[name="pwd"]')
+
+	user.send_keys(PF_USER)
+	pwd.send_keys(PF_PASS)
+
+	find('input[value="Sign In"]').click
+
+	#accounts page
+	
+
+	page.all(:xpath, '//option[contains(text(), "102296")]').first.select_option
+	sleep 3
+
+	this_month = MONTHS.index(Time.now.strftime("%B"))
+
+	@global_data = []
+	@lastyear = ''
+
+	if not options[:latest]
+		MONTHYEARS.each do |month_year|
+			
+			@month,@year = month_year.split("-").map{|x|x.gsub("-","")}
+		
+			get_all_table_data(page)
+
+			@date = Date.parse("#{@month}-#{@year}").strftime("%y-%m"); p @date
+			write_to_local_csv(@data,"#{@date}")
+			write_to_local_csv(@global_data,"all")
+
+			@lastyear = @year
+		end
+		@global_data
+	else
+		@month = Date.today.strftime("%B")
+		@last_month = (Date.today - 7).strftime("%B")
+
+		@year = Date.today.strftime("%Y")
+		@last_year = (Date.today - 7).strftime("%Y")
+
+		if @month!=@last_month 
+			@month = @last_month
+			get_all_table_data(page)
+		end
+
+		get_all_table_data(page)
+
+		[@global_data,@data[-1]]
 		
 	end
 
-	@global_data
-	# mail(@global_data)
+	
+	
 end
 
 

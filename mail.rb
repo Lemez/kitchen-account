@@ -16,13 +16,14 @@ Mail.defaults do
   delivery_method :smtp, options
 end
 
-def mail(data)
-	formatted_data = format_data_to_html(data)
+def mail(data,options={:balance=>nil})
+	formatted_data = format_data_to_html(data,options)
 	p formatted_data
-	deliver_mail(formatted_data)
+	deliver_mail(formatted_data, options)
 end
 
-def format_data_to_html(data)
+def format_data_to_html(data,options)
+
 	# {"S.NO"=>"14348", "TYPE"=>"MT", "DATE"=>"01-02-2017", "ACCOUNT"=>"0373K - PT PURCHASING SERVICE", "DESCRIPTION"=>"MT 01/02/17 - BN:4 - 2017-02-1", "DEBIT"=>"-493.71", "CREDIT"=>""}
 	not_necessary = ["S.NO", "TYPE"]
 	headings = data[0].keys.reject{|a| not_necessary.include?(a) || a.empty?}
@@ -37,14 +38,19 @@ def format_data_to_html(data)
 		html += "<td>" + line.values[2..-1].join("</td><td>") + "</td>"
 		html += '</tr>' 
 	end
+	if options[:balance]
+		html += '<tr>'
+		html += "<td>" + ["BALANCE",options[:balance].values.flatten.map(&:to_i).reduce(&:+)].join("</td><td>") + "</td>"
+		html += '</tr>'
+	end
 
 	html += '</tbody></table>'
 	html
 end
 
-def deliver_mail (data)
+def deliver_mail (data,options)
 	Mail.deliver do
-       	to 'jonathan@auroville.org.in'
+       	to options[:mail]
      	from 'jonathan@auroville.org.in'
   		subject 'Kitchen account update: ' + Date.today.to_s
      	

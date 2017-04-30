@@ -14,21 +14,19 @@
 'PT PURCHASING SERVICE'
 ]
 
-M_ABBR = %w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-M_PAYMENTS = %w(11 12 01 02 03 04)
-M_PAYMENT_MONTHS = %w(Nov Dec Jan Feb Mar Apr May Jun Jul Aug Sep Oct)
-
+M_ABBR = %w(May Jun Jul Aug Sep Oct Nov Dec Jan Feb Mar Apr)
+M_PAYMENTS = %w(05 06 07 08 09 10 11 12 01 02 03 04)
+TABLE_HEADINGS = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
 
 def get_data_offline_from_csvs
 		p "getting data offline"
 		@data = []
-		@fields = %w(S.NO TYPE DATE ACCOUNT DESCRIPTION DEBIT CREDIT)
-
+		
 		CSV.foreach("./csv/all-kitchen-accounts.csv","r") do |csv_row|
 			next if csv_row[0]=="S.NO"
-			row = {}; @fields.each{|f| row[f]=""}
+			row = {}; TABLE_HEADINGS.each{|f| row[f]=""}
 			csv_row.each_with_index do |item,index| 
-				row[@fields[index]]=item
+				row[TABLE_HEADINGS[index]]=item
 			end
 
 			@data << row
@@ -38,9 +36,9 @@ def get_data_offline_from_csvs
 end
 
 
-def write_to_local_csv(data,fields,month)
+def write_to_local_csv(data,month)
 	CSV.open("csv/#{month}-kitchen-accounts.csv",'wb', col_sep: ",") do |csvfile|
-		csvfile << fields
+		csvfile << FIELDS
 		data.each do |record|
 			csvfile << record.values			
 		end
@@ -49,17 +47,18 @@ end
 
 	# {"S.NO"=>"14348", "TYPE"=>"MT", "DATE"=>"01-02-2017", "ACCOUNT"=>"0373K - PT PURCHASING SERVICE", "DESCRIPTION"=>"MT 01/02/17 - BN:4 - 2017-02-1", "DEBIT"=>"-493.71", "CREDIT"=>""}
 
-def write_annual_data(data,fields)
+def write_annual_data(data)
 	@records = {}
 	CSV.open("csv/annual-2017.csv",'wb', col_sep: ",") do |csvfile|
 		header = ["Account"]
-		M_PAYMENT_MONTHS.each do |month|
+		M_ABBR.each do |month|
 			header << [month,""]
 		end
 
 		csvfile << header.flatten
 	
 		descs = data.collect{|record|record["DESCRIPTION"]}
+
 		descs.each_with_index do |desc,i|
 			@month = ''
 
@@ -110,7 +109,7 @@ def write_annual_data(data,fields)
 						if payments.has_key?(m)
 
 							amount = payments[m].map(&:first).map(&:to_f).reduce(&:+).round(0)
-							comment = payments[m].map(&:last).join("\n")
+							comment = payments[m].map(&:last).join(" / ")
 							
 							@to_write << [amount,comment]
 
@@ -139,7 +138,7 @@ def write_annual_data(data,fields)
 			the_real_thing = []
 			the_cash_thing = []
 
-			cash_amount = 5632
+			cash_amount = -1625
 			
 			first.each_with_index do |j,index|
 				the_real_thing << [j + second[index]," "]
@@ -152,7 +151,7 @@ def write_annual_data(data,fields)
 		end
 	end
 
-def write_summary_data(data,fields)
+def write_summary_data(data)
 	
 	@incoming = data.reject{|record|record["CREDIT"].empty?}
 	@outgoing = data.reject{|record|record["DEBIT"].empty?}
