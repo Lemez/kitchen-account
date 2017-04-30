@@ -23,7 +23,7 @@ def mail(data,balance)
 	formatted_data = format_data_to_html(data,balance)
 	p formatted_data
 
-	deliver_mail(formatted_data, options)
+	deliver_mail(formatted_data)
 end
 
 def format_data_to_html(data,balance=nil)
@@ -52,7 +52,7 @@ def format_data_to_html(data,balance=nil)
 	html
 end
 
-def deliver_mail (data,options)
+def deliver_mail (data)
 	Mail.deliver do
        	to options[:mail]
      	from 'jonathan@auroville.org.in'
