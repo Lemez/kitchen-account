@@ -26,7 +26,7 @@ def mail(data,balance)
 	deliver_mail(formatted_data, options)
 end
 
-def format_data_to_html(data,balance)
+def format_data_to_html(data,balance=nil)
 
 	# {"S.NO"=>"14348", "TYPE"=>"MT", "DATE"=>"01-02-2017", "ACCOUNT"=>"0373K - PT PURCHASING SERVICE", "DESCRIPTION"=>"MT 01/02/17 - BN:4 - 2017-02-1", "DEBIT"=>"-493.71", "CREDIT"=>""}
 	not_necessary = ["S.NO", "TYPE"]
@@ -42,7 +42,7 @@ def format_data_to_html(data,balance)
 		html += "<td>" + line.values[2..-1].join("</td><td>") + "</td>"
 		html += '</tr>' 
 	end
-	if options[:balance]
+	if balance
 		html += '<tr>'
 		html += "<td>" + ["BALANCE",balance.values.flatten.map(&:to_i).reduce(&:+)].join("</td><td>") + "</td>"
 		html += '</tr>'
