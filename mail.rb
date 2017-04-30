@@ -6,7 +6,7 @@ unless $heroku
 	$pass = PASS
 end
 
-$options = { :address              => "smtp.gmail.com",
+$mail_options = { :address              => "smtp.gmail.com",
             :port                 => 587,
             # :domain               => 'your.host.name',
             :user_name            => $user,
@@ -15,7 +15,7 @@ $options = { :address              => "smtp.gmail.com",
             :enable_starttls_auto => true  }
 
 Mail.defaults do
-  delivery_method :smtp, $options
+  delivery_method :smtp, $mail_options
 end
 
 def mail(data,balance)
@@ -54,7 +54,7 @@ end
 
 def deliver_mail (data)
 	Mail.deliver do
-       	to $options[:mail]
+       	to 'danielaboban@hotmail.com'
      	from 'jonathan@auroville.org.in'
   		subject 'Kitchen account update: ' + Date.today.to_s
      	
